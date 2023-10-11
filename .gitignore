@@ -125,3 +125,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+.prettierrc
+messaround.ts
+encryption_playground.ts
+Example Auth App.postman_collection.json
