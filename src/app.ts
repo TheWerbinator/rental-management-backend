@@ -1,5 +1,6 @@
 import express from "express";
 import "express-async-errors";
+import dotenv from "dotenv";
 import { Users } from "@prisma/client";
 import { error } from "console";
 import { authController } from "./router/auth.router";
@@ -9,6 +10,7 @@ import { rentalController } from "./router/rental.router";
 import { savedController } from "./router/saved.router";
 
 const app = express();
+dotenv.config();
 
 declare global {
   namespace Express {
