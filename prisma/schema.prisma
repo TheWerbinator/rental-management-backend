@@ -43,6 +43,6 @@ model SavedForLater {
   id          Int             @id @default(autoincrement())
   userEmail   String
   user        Users?           @relation(fields: [userEmail], references: [email])
-  rentalId    Int
-  equipmentId Equipment? @relation(fields: [rentalId], references: [id])
+  savedId     Int
+  equipmentId Equipment? @relation(fields: [savedId], references: [id])
 }

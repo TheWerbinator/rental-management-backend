@@ -5,11 +5,20 @@ import { validateRequest } from "zod-express-middleware";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import {
+  authMiddleware,
   createTokenForUser,
   createUnsecuredUserInfo,
 } from "../auth-utils";
 
 const authController = Router();
+
+authController.post(
+  "/auth/local",
+  authMiddleware,
+  async (req, res) => {
+    res.status(200).json([req.user, true]);
+  }
+);
 
 authController.post(
   "/auth/login",
@@ -33,18 +42,18 @@ authController.post(
       return res.status(404).json({ message: "user not found" });
     }
 
-    const isPasswordCorrect = bcrypt.compare(
-      bodyPassword,
-      user.passwordHash
-    );
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ message: "invalid credentials" });
-    }
+    bcrypt.compare(bodyPassword, user.passwordHash).then((check) => {
+      if (!check) {
+        return res
+          .status(401)
+          .json({ message: "invalid credentials" });
+      } else {
+        const userInfo = createUnsecuredUserInfo(user);
+        const token = createTokenForUser(user);
 
-    const userInfo = createUnsecuredUserInfo(user);
-    const token = createTokenForUser(user);
-
-    return res.status(200).json({ token, userInfo });
+        return res.status(200).json({ userInfo, token });
+      }
+    });
   }
 );
 

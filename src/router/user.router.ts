@@ -31,6 +31,38 @@ const userController = Router();
 //   res.json(users);
 // });
 
+userController.post(
+  "/users",
+  authMiddleware,
+  validateRequest({
+    body: z.object({ email: z.string().email() }),
+  }),
+  async (req, res, next) => {
+    if (req.user!.email === req.body.email) {
+      return res.status(400).json({
+        message:
+          "Please change your email address to something different than your current email",
+      });
+    }
+
+    return await prisma.users
+      .update({
+        where: {
+          email: req.user?.email,
+        },
+        data: {
+          email: req.body.email,
+        },
+      })
+      .then((user) => res.status(201).json(user))
+      .catch((e) => {
+        console.error(e);
+        res.status(500).json({ message: "Username is taken" });
+      })
+      .finally(next);
+  }
+);
+
 userController.patch(
   "/users",
   authMiddleware,

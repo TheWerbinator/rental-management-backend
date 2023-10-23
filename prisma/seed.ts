@@ -2,13 +2,15 @@ import { encryptPassword } from "../src/auth-utils";
 import { prisma } from "./db.setup";
 
 const clearDb = async () => {
-  await prisma.equipment.deleteMany();
+  await prisma.savedForLater.deleteMany();
+  await prisma.activeRentals.deleteMany();
   await prisma.users.deleteMany();
+  await prisma.equipment.deleteMany();
 };
 
 const seed = async () => {
   console.log("Seeding the database...");
-  // await clearDb();
+  await clearDb();
 
   // Create Jesse
   const Jesse = await prisma.users.create({

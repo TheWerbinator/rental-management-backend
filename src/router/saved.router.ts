@@ -19,21 +19,21 @@ savedController.get("/saved/:userEmail", async (req, res) => {
 });
 
 savedController.post(
-  "/saved",
+  "/saved/:userEmail",
   validateRequest({
     body: z.object({
       userEmail: z.string(),
-      rentalId: z.number(),
+      savedId: z.number(),
     }),
   }),
   authMiddleware,
   async (req, res) => {
-    const { userEmail, rentalId } = req.body;
+    const { userEmail, savedId } = req.body;
     const saved = await prisma.savedForLater
       .create({
         data: {
           userEmail: userEmail,
-          rentalId: rentalId,
+          savedId: savedId,
         },
       })
       .catch(() => null);
@@ -46,10 +46,10 @@ savedController.post(
 );
 
 savedController.delete(
-  "/saved/:equipmentId",
+  "/saved/:savedId",
   validateRequest({
     params: z.object({
-      equipmentId: intParseableString,
+      savedId: z.number(),
     }),
   }),
   authMiddleware,
@@ -57,7 +57,7 @@ savedController.delete(
     await prisma.savedForLater
       .delete({
         where: {
-          id: parseInt(req.params.equipmentId),
+          savedId: parseInt(req.params.savedId),
         },
       })
       .then(() =>

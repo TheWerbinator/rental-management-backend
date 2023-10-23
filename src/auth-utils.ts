@@ -15,6 +15,8 @@ export const checkPassword = async (password: string, hash: string) => {
 
 export const createUnsecuredUserInfo = (user: Users) => ({
   email: user.email,
+  name: user.name,
+  password: user.passwordHash,
 });
 
 export const createTokenForUser = (user: Users) => {
@@ -26,6 +28,8 @@ export const createTokenForUser = (user: Users) => {
 
 const jwtInfoSchema = z.object({
   email: z.string().email(),
+  name: z.string(),
+  password: z.string(),
   iat: z.number(),
 });
 
@@ -46,10 +50,13 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  const [, token] = req.headers.authorization?.split?.("") || [];
+  const [, token] = req.headers.authorization?.split?.(" ") || [];
+  console.log(token);
   const myJwtData = getDataFromAuthToken(token);
+  console.log(myJwtData);
   if (!myJwtData) {
-    return res.status(401).json({ message: "Invalid token" });
+    console.log("Invalid token");
+    return res.status(401).json({ message: "Invalid token", token });
   }
   const userFromJwt = await prisma.users.findFirst({
     where: {

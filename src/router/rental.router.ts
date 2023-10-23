@@ -8,15 +8,19 @@ import { intParseableString as intParseableString } from "../zod/parseableString
 
 const rentalController = Router();
 
-rentalController.get("/rentals/:userEmail", async (req, res) => {
-  const { userEmail } = req.params;
-  const rented = await prisma.equipment.findMany({
-    where: {
-      userEmail,
-    },
-  });
-  res.json(rented);
-});
+rentalController.get(
+  "/rentals/:userEmail",
+  authMiddleware,
+  async (req, res) => {
+    const { userEmail } = req.params;
+    const rented = await prisma.equipment.findMany({
+      where: {
+        userEmail,
+      },
+    });
+    res.json(rented);
+  }
+);
 
 rentalController.post(
   "/rentals",
