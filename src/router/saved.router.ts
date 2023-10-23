@@ -22,16 +22,17 @@ savedController.post(
   "/saved",
   validateRequest({
     body: z.object({
+      userEmail: z.string(),
       rentalId: z.number(),
     }),
   }),
   authMiddleware,
   async (req, res) => {
-    const { rentalId } = req.body;
+    const { userEmail, rentalId } = req.body;
     const saved = await prisma.savedForLater
       .create({
         data: {
-          userEmail: req.user!.email,
+          userEmail: userEmail,
           rentalId: rentalId,
         },
       })
@@ -51,6 +52,7 @@ savedController.delete(
       equipmentId: intParseableString,
     }),
   }),
+  authMiddleware,
   async (req, res) => {
     await prisma.savedForLater
       .delete({

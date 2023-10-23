@@ -59,6 +59,7 @@ rentalController.delete(
       equipmentId: intParseableString,
     }),
   }),
+  authMiddleware,
   async (req, res) => {
     await prisma.equipment
       .delete({

@@ -31,14 +31,14 @@ app.disable('x-powered-by');
 //     expires: expiryDate
 //   }
 // }))
-app.use(helmet({
-  crossOriginResourcePolicy: false,
-  crossOriginOpenerPolicy: false
-}))
+// app.use(helmet({
+//   crossOriginResourcePolicy: false,
+//   crossOriginOpenerPolicy: false
+// }))
 // Disable CORS for testing
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.header('Access-Control-Allow-Methods', 'GET, PATCH, POST, PUT, DELETE');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   next();
 });
@@ -79,9 +79,9 @@ app.use(savedController);
 // https
 //   .createServer(app)
 //   .listen(3000, ()=>{
-//     console.log('server is runing at port 3000')
+//     console.log('server is running at port 3000')
 //   });
 
 app.listen(3000, ()=>{
-      console.log('server is runing at port 3000')
+      console.log('server is running at port 3000')
     });

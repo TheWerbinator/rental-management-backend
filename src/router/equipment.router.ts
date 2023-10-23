@@ -60,6 +60,7 @@ equipmentController.patch(
       equipmentId: intParseableString,
     }),
   }),
+  authMiddleware,
   async (req, res, next) => {
     const equipmentId = parseInt(req.params.equipmentId);
 

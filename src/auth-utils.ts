@@ -9,6 +9,10 @@ export const encryptPassword = (password: string) => {
   return bcrypt.hash(password, 12);
 };
 
+export const checkPassword = async (password: string, hash: string) => {
+  return await bcrypt.compare(password, hash)
+};
+
 export const createUnsecuredUserInfo = (user: Users) => ({
   email: user.email,
 });
