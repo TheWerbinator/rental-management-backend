@@ -8,15 +8,19 @@ import { intParseableString as intParseableString } from "../zod/parseableString
 
 const savedController = Router();
 
-savedController.get("/saved/:userEmail", async (req, res) => {
-  const { userEmail } = req.params;
-  const saved = await prisma.savedForLater.findMany({
-    where: {
-      userEmail,
-    },
-  });
-  res.json(saved);
-});
+savedController.get(
+  "/saved/:userEmail",
+  authMiddleware,
+  async (req, res) => {
+    const { userEmail } = req.params;
+    const saved = await prisma.savedForLater.findMany({
+      where: {
+        userEmail,
+      },
+    });
+    res.json(saved);
+  }
+);
 
 savedController.post(
   "/saved/:userEmail",
@@ -47,17 +51,17 @@ savedController.post(
 
 savedController.delete(
   "/saved/:savedId",
-  validateRequest({
-    params: z.object({
-      savedId: z.number(),
-    }),
-  }),
   authMiddleware,
   async (req, res) => {
+    const savedItem = await prisma.savedForLater.findFirstOrThrow({
+      where: {
+        savedId: parseInt(req.params.savedId),
+      },
+    });
     await prisma.savedForLater
       .delete({
         where: {
-          savedId: parseInt(req.params.savedId),
+          id: savedItem.id,
         },
       })
       .then(() =>

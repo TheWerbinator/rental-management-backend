@@ -51,9 +51,9 @@ export const authMiddleware = async (
   next: NextFunction
 ) => {
   const [, token] = req.headers.authorization?.split?.(" ") || [];
-  console.log(token);
+  token == undefined && console.log("token is undefined");
   const myJwtData = getDataFromAuthToken(token);
-  console.log(myJwtData);
+  myJwtData == null && console.log("myJwtData is null");
   if (!myJwtData) {
     console.log("Invalid token");
     return res.status(401).json({ message: "Invalid token", token });

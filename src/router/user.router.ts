@@ -3,20 +3,24 @@ import { validateRequest } from "zod-express-middleware";
 import "express-async-errors";
 import { z } from "zod";
 import { prisma } from "../../prisma/db.setup";
-import { authMiddleware, checkPassword } from "../auth-utils";
+import {
+  authMiddleware,
+  checkPassword,
+  encryptPassword,
+} from "../auth-utils";
 
 const userController = Router();
 
 // userController.get("/users/:userEmail", async (req, res) => {
 //   let pass = req.query.pass;
-  
+
 //   const { userEmail } = req.params;
 //   const user = await prisma.users.findFirst({
 //     where: {
 //       email: userEmail,
 //     },
 //   })
-  
+
 //   if (typeof pass == 'string' && user){
 //     await checkPassword(pass, user.passwordHash).then((check) => {
 //       if (check === true){
@@ -33,33 +37,37 @@ const userController = Router();
 
 userController.post(
   "/users",
-  authMiddleware,
   validateRequest({
-    body: z.object({ email: z.string().email() }),
+    body: z.object({
+      email: z.string().email(),
+      name: z.string(),
+      password: z.string(),
+    }),
   }),
   async (req, res, next) => {
-    if (req.user!.email === req.body.email) {
-      return res.status(400).json({
-        message:
-          "Please change your email address to something different than your current email",
-      });
-    }
+    // if (req.user!.email === req.body.email) {
+    //   return res.status(400).json({
+    //     message:
+    //       "Please change your email address to something different",
+    //   });
+    // }
 
-    return await prisma.users
-      .update({
-        where: {
-          email: req.user?.email,
-        },
-        data: {
-          email: req.body.email,
-        },
-      })
-      .then((user) => res.status(201).json(user))
-      .catch((e) => {
-        console.error(e);
-        res.status(500).json({ message: "Username is taken" });
-      })
-      .finally(next);
+    encryptPassword(req.body.password).then(async (hash) => {
+      return await prisma.users
+        .create({
+          data: {
+            email: req.body.email,
+            name: req.body.name,
+            passwordHash: hash,
+          },
+        })
+        .then((user) => res.status(201).json(user))
+        .catch((e) => {
+          console.error(e);
+          res.status(500).json({ message: "Username is taken" });
+        })
+        .finally(next);
+    });
   }
 );
 

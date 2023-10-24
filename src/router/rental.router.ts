@@ -13,7 +13,7 @@ rentalController.get(
   authMiddleware,
   async (req, res) => {
     const { userEmail } = req.params;
-    const rented = await prisma.equipment.findMany({
+    const rented = await prisma.activeRentals.findMany({
       where: {
         userEmail,
       },
@@ -26,49 +26,49 @@ rentalController.post(
   "/rentals",
   validateRequest({
     body: z.object({
-      name: z.string(),
-      description: z.string(),
-      image: z.string(),
-      isRented: z.boolean(),
+      userEmail: z.string(),
+      rentalId: z.number(),
     }),
   }),
   authMiddleware,
   async (req, res) => {
-    const { name, description, image, isRented } = req.body;
-    const rented = await prisma.equipment
+    const { userEmail, rentalId } = req.body;
+    const rented = await prisma.activeRentals
       .create({
         data: {
-          name,
-          description,
-          image,
-          isRented,
-          userEmail: req.user!.email,
+          userEmail: userEmail,
+          rentalId: rentalId,
         },
       })
-      .catch(() => null);
+      .catch((err) => console.error(err));
 
     if (!rented) {
       return res
         .status(500)
-        .json({ message: "equipment not created" });
+        .json({ message: "equipment not rented" });
     }
     return res.json(rented);
   }
 );
 
 rentalController.delete(
-  "/rentals/:equipmentId",
+  "/rentals/:rentalId",
   validateRequest({
     params: z.object({
-      equipmentId: intParseableString,
+      rentalId: intParseableString,
     }),
   }),
   authMiddleware,
   async (req, res) => {
-    await prisma.equipment
+    const rentedItem = await prisma.activeRentals.findFirstOrThrow({
+      where: {
+        rentalId: parseInt(req.params.rentalId),
+      },
+    });
+    await prisma.activeRentals
       .delete({
         where: {
-          id: parseInt(req.params.equipmentId),
+          id: rentedItem.id,
         },
       })
       .then(() =>

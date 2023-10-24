@@ -35,6 +35,7 @@ app.disable('x-powered-by');
 //   crossOriginResourcePolicy: false,
 //   crossOriginOpenerPolicy: false
 // }))
+
 // Disable CORS for testing
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -49,9 +50,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// app.options("/*", (_, res) => {
-//   res.sendStatus(200);
-// });
+app.options("/*", (_, res) => {
+  res.sendStatus(200);
+});
 
 declare global {
   namespace Express {
