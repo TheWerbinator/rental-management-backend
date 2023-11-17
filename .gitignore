@@ -129,3 +129,4 @@ dist
 messaround.ts
 encryption_playground.ts
 Example Auth App.postman_collection.json
+*.db
