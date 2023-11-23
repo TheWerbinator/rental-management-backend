@@ -14,6 +14,8 @@ In addition to the frontend, this project is also dependent on a number of packa
 
 Lastly, this project uses a JSON Web Token (JWT) to encode information travelling between the fronend and the backend. You will need a .env file with the following environment variables -
 
-DATABASE_URL - a string as the URL for your database, whether that be a file location or a hosted IP address. This project is set up using Prisma as the ORM, so ```file:./dev.db``` is likely appropriate.
-
-JWT_SECRET - a string of your choosing used as the secret for the encoding. 
+```sh
+DATABASE_URL = "file:./dev.db" # a string as the URL for your database, whether that be a file location or a hosted IP address.
+#This project is set up using Prisma as the ORM, so "file:./dev.db" is likely appropriate.
+JWT_SECRET = "53CR37" # a string of your choosing used as the secret for the encoding. 
+```
