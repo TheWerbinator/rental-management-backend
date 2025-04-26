@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,11 +8,11 @@ datasource db {
 }
 
 model Users {
-  email           String            @id @unique
+  email           String          @id @unique
   name            String
-  rentedEquipment Equipment[]
   passwordHash    String
   ActiveRentals   ActiveRentals[]
+  rentedEquipment Equipment[]
   SavedForLater   SavedForLater[]
 }
 
@@ -26,23 +23,23 @@ model Equipment {
   image         String
   isRented      Boolean
   userEmail     String?
-  user          Users?           @relation(fields: [userEmail], references: [email])
   ActiveRentals ActiveRentals[]
+  user          Users?          @relation(fields: [userEmail], references: [email])
   SavedForLater SavedForLater[]
 }
 
 model ActiveRentals {
-  id          Int             @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   userEmail   String
-  user        Users?           @relation(fields: [userEmail], references: [email])
   rentalId    Int
-  equipmentId Equipment? @relation(fields: [rentalId], references: [id])
+  equipmentId Equipment @relation(fields: [rentalId], references: [id])
+  user        Users     @relation(fields: [userEmail], references: [email])
 }
 
 model SavedForLater {
-  id          Int             @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   userEmail   String
-  user        Users?           @relation(fields: [userEmail], references: [email])
   savedId     Int
-  equipmentId Equipment? @relation(fields: [savedId], references: [id])
+  equipmentId Equipment @relation(fields: [savedId], references: [id])
+  user        Users     @relation(fields: [userEmail], references: [email])
 }
